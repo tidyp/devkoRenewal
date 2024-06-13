@@ -13,7 +13,7 @@ const LoginPage = () => {
       <p className="mt-[90%] text-[4rem] font-bold">DEKVO</p>
       <div className="mb-8 text-xl">Let&#39;s get started!</div>
       <div className="flex flex-col gap-4">
-        <button className="shadow-3xl flex h-12 w-64 items-center justify-center gap-2 rounded-lg bg-[#000] px-8 ">
+        <button className="shadow-3xl flex h-12 w-64 items-center justify-center gap-2 rounded-lg bg-[#000] px-8" onClick={signIn}>
           {/* <Google /> */}
           <spans className="text-white">Github로 계속하기 </spans>
         </button>
