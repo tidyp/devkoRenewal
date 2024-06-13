@@ -1,4 +1,4 @@
-import { API_URL } from '../../config';
+import { API_URL } from "../../config";
 import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import cookie from "react-cookies";
@@ -103,8 +103,7 @@ const Post = ({ post }) => {
     navigate("/");
   };
 
-
-  const pimg = post.profileImage
+  const pimg = post.profileImage;
   // console.log(pimg.replace('"', ""))
 
   const likes = post.likeName ? post.likeName.split(",").length : 0;
@@ -122,11 +121,7 @@ const Post = ({ post }) => {
           <Link className="h-12 w-12" to={`/userinfo/${post.userId}`}>
             <img
               className="h-12 w-12 rounded-lg"
-              src={
-                pimg
-                  ? post.profileImage
-                  : `/images/basicprofile.jpg`
-              }
+              src={pimg ? post.profileImage : `/images/basicprofile.jpg`}
               alt={post.profileImage}
             />
           </Link>

@@ -6,11 +6,13 @@ import Sidebar from "../../components/Sidebar";
 import PostList from "./PostList";
 import AlertsBox from "../../components/AlertsBox";
 import { useEffect, useState } from "react";
+import supabase from "../../api/supabase";
+import { getData } from "../../api/apiDiscuss";
 
 const Index = () => {
+  // const [posts, setPosts] = useState();
   const posts = useLoaderData();
   const [showScrollButton, setShowScrollButton] = useState(false);
-  console.log(posts)
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -44,7 +46,7 @@ const Index = () => {
           </div>
         </div>
 
-        <div className="flex w-full items-start justify-center relative sm:w-[40rem]">
+        <div className="relative flex w-full items-start justify-center sm:w-[40rem]">
           {!(posts === "연결실패") && posts.length > 0 && (
             <PostList posts={posts} />
           )}
@@ -73,8 +75,15 @@ export default Index;
 
 export async function loader() {
   try {
-    const board = await readPosts();
+    const board = await getData();
     return board;
+
+    // const testfun = async () => {
+    //   const data = await getData();
+    //   console.log(data);
+    //   setPosts(data);
+    // };
+    // testfun();
   } catch (error) {
     console.error("Error fetching posts:", error);
     return "연결실패";

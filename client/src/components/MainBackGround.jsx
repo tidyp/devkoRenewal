@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Particles from "react-particles";
 import { Outlet } from "react-router-dom";
 import Banner from "../components/Banner";
@@ -8,12 +8,26 @@ import { Link } from "react-router-dom";
 import cookie from "react-cookies";
 import Button from "./Button";
 import Modal from "../components/Modal";
+import supabase from "../api/supabase";
 
 const MainBackGround = ({ children }) => {
   const [mainText, setMainText] = useState();
-
-  const isLogin = cookie.load("uuid");
+  const [isLogin, setIsLogin] = useState();
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    checkLogin();
+  }, []);
+
+  const checkLogin = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const userId = JSON.stringify(user.id);
+    const userImg = JSON.stringify(user.user_metadata.avatar_url);
+    console.log(userImg);
+    setIsLogin(userId);
+  };
 
   const handleOpen = () => {
     setIsOpen((prev) => !prev);
@@ -50,7 +64,10 @@ const MainBackGround = ({ children }) => {
                   로그인하러가기
                 </button>
               </Link>
-              <button className="rounded-xl bg-white p-4 text-black " onClick={handleClose}>
+              <button
+                className="rounded-xl bg-white p-4 text-black "
+                onClick={handleClose}
+              >
                 취소
               </button>
             </div>

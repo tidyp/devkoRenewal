@@ -8,7 +8,10 @@ import { GoTriangleDown } from "react-icons/go";
 import { FaSearch } from "react-icons/fa";
 import { VscBell, VscBellDot } from "react-icons/vsc";
 
+import { signOut } from "../api/api";
+
 import { useEffect, useRef, useState } from "react";
+import supabase from "../api/supabase";
 
 const dummy = [
   {
@@ -31,6 +34,8 @@ const unreadCount = dummy.filter((item) => !item.isRead).length;
 const NaviBar = () => {
   const dropdownRef = useRef();
   const [isDropdownOpen, setDropdownOpen] = useState(false);
+  const [isLogin, setIsLogin] = useState();
+  const [userImage, setUserImage] = useState();
 
   const handleDropdownToggle = () => {
     setDropdownOpen((prev) => !prev);
@@ -43,6 +48,7 @@ const NaviBar = () => {
       }
     };
 
+    checkLogin();
     document.addEventListener("click", handleOutsideClick);
 
     return () => {
@@ -60,47 +66,29 @@ const NaviBar = () => {
     setDropdownOpen((prev) => !prev);
   };
 
+  //
+  //
+  const checkLogin = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    const userId = JSON.stringify(user.id);
+    const userImg = JSON.stringify(user.user_metadata.avatar_url);
+    console.log(userImg);
+    setUserImage(userImg);
+    setIsLogin(userId);
+  };
+  //
+  //
   const useruuid = cookie.load("uuid");
-  const userName = cookie.load("userName");
-  const userImage = cookie.load("userImage");
-  let testPopUp;
-  function openPopUp() {
-    testPopUp = window.open(
-      "https://nid.naver.com/nidlogin.logout",
-      "_blank",
-      "toolbar=yes,scrollbars=yes,resizable=yes,width=1,height=1",
-    );
-  }
-  function closePopUp() {
-    testPopUp.close();
-  }
 
-  // const clickLogout = async () => {
-  const clickLogout = () => {
-    cookie.remove("googleImage", { path: "/" });
-    cookie.remove("googleId", { path: "/" });
-    cookie.remove("naverImage", { path: "/" });
-    cookie.remove("naverId", { path: "/" });
-    cookie.remove("uuid", { path: "/" });
-    cookie.remove("userName", { path: "/" });
-    cookie.remove("userImage", { path: "/" });
-
-    // const logoutUrl = "https://nid.naver.com/nidlogin.logout";
-
-    // await fetch(logoutUrl, {
-    //   method: "GET",
-    //   mode: "no-cors",
-    // });
-
-    openPopUp();
-    setTimeout(function () {
-      closePopUp();
-    }, -1);
-
-    navigate("/");
+  // const handleSignOut = async () => {
+  const handleSignOut = async () => {
+    signOut();
+    setIsLogin();
+    alert("로그아웃 하였습니다.");
   };
 
-  //
   //
   const activeLink = "text-black font-bold";
   // 검색
@@ -249,15 +237,11 @@ const NaviBar = () => {
               ))}
             </div> */}
 
-            {useruuid && (
+            {isLogin && (
               <div className="flex flex-row items-center gap-2 text-3xl">
                 {/* <Link to={`/userinfo`}> */}
                 <Link to={`/userinfo/${useruuid}`}>
-                  <img
-                    className="w-8 rounded-full"
-                    src={userImage || `${userImage}`}
-                    alt=""
-                  />
+                  <img className="w-8 rounded-full" src={`${userImage.replace('"', '')}`} alt={userImage} />
                 </Link>
                 <div onClick={handleDropdownToggle} className="cursor-pointer">
                   <GoTriangleDown />
@@ -265,16 +249,16 @@ const NaviBar = () => {
               </div>
             )}
 
-            {!useruuid && (
+            {!isLogin && (
               <Link className="text-sm" to="login">
                 로그인/회원가입
               </Link>
             )}
             {isDropdownOpen && (
               <div className=" w-30 item translate3d absolute right-0 top-14 flex flex-col rounded border bg-white p-2 px-4 shadow-md">
-                {userName && (
+                {isLogin && (
                   <>
-                    <span className=" cursor-pointer" onClick={clickLogout}>
+                    <span className=" cursor-pointer" onClick={handleSignOut}>
                       로그아웃
                     </span>
                     <Link className="" to={`/myinfo/${useruuid}`}>
